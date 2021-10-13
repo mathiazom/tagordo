@@ -14,7 +14,7 @@ def main():
         raise ValueError("No script provided")
     cron_expression = sys.argv[1]
     if not croniter.is_valid(cron_expression):
-        raise ValueError("Invalid cron expression '{cron_expression}'")
+        raise ValueError(f"Invalid cron expression '{cron_expression}'")
     # Find last date it should have run
     should_have_run_date = croniter(cron_expression).get_prev(datetime.datetime).date()
     print(f"Should have run at {should_have_run_date}")
