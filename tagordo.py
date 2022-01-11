@@ -10,8 +10,6 @@ def main():
         raise ValueError("No cron expression was provided")
     if len(sys.argv) < 3:
         raise ValueError("No checkpoints directory provided")
-    if len(sys.argv) < 4:
-        raise ValueError("No script provided")
     cron_expression = sys.argv[1]
     if not croniter.is_valid(cron_expression):
         raise ValueError(f"Invalid cron expression '{cron_expression}'")
@@ -24,12 +22,17 @@ def main():
     latest_checkpoint_date = find_latest_checkpoint_date(directory=sys.argv[2])
     if latest_checkpoint_date is not None and latest_checkpoint_date >= should_have_run_date:
         print("Looking good!")
+        sys.exit(1)
         return
     print("Looks like you're behind schedule...")
-    # Treat rest of cli args for this script as python cli args
-    script = " ".join(sys.argv[3:])
-    print(f"Running '{script}'")
-    os.system(f"python {script}")
+    # Check if optional script was provided
+    if len(sys.argv) > 3:
+        # Treat rest of cli args for this script as python cli args
+        script = " ".join(sys.argv[3:])
+        print(f"Running '{script}'")
+        os.system(f"python {script}")
+        return
+    sys.exit(0)
 
 
 # Look through checkpoint files and find the date of the latest checkpoint
